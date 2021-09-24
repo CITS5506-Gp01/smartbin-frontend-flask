@@ -1,0 +1,4 @@
+
+#vm + pycache
+venv/
+__pycache__/
