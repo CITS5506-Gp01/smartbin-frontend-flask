@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+<div><h> SMART BIN {{ device[1] }} </h></div>
+<div>
+{% for entry in entries %}
+<p>Distance at {{ entry[2] }} is {{ entry[3] }} cm</p>
+
+{% endfor %}
+
+</div>
+<div>
+    <a href="{{ url_for('index') }}"><button>return to homepage</button></a>
+</div>
+</body>
+
+</html>
