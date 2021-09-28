@@ -1,20 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
 </head>
 
+{% extends 'base.html' %}
+{% block content %}
+
 <body>
-<div><h> SMART BINS </h></div>
 
-{% for device in devices %}
+    <div class="container">
+        <div class="text-center">
+            <h1>SMART BINS</h1>
+            <p class="lead">List of devices</p>
 
-{{ device[1] }}
-{{ device[0] }}
-<a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
-{% endfor %}
-
-
+            {% for device in devices %}
+            {{ device[1] }}
+            {{ device[0] }}
+            <a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 
-</html>
+{% endblock %}

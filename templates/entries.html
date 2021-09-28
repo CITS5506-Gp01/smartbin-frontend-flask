@@ -1,21 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block content %}
 
 <head>
 </head>
 
 <body>
-<div><h> SMART BIN {{ device[1] }} </h></div>
-<div>
-{% for entry in entries %}
-<p>Distance at {{ entry[2] }} is {{ entry[3] }} cm</p>
+    
+    <div class="container">
+        <div>
+            <a href="{{ url_for('index') }}"><button>return to homepage</button></a>
+        </div>
 
-{% endfor %}
+        <div class="text-center">
+            <h1>SMART BIN {{ device[1] }}</h1>
 
-</div>
-<div>
-    <a href="{{ url_for('index') }}"><button>return to homepage</button></a>
-</div>
+            <div>
+                {% for entry in entries %}
+                <p>Distance at {{ entry[2] }} is {{ entry[3] }} cm</p>
+
+                {% endfor %}
+
+            </div>
+
+
+        </div>
+    </div>
 </body>
-
-</html>
+{% endblock %}

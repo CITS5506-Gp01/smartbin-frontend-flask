@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,flash
 from flask import render_template, url_for
 
 import mysql.connector
@@ -21,7 +21,7 @@ cursor=db.cursor()
 
 
 app = Flask(__name__)
-
+app.secret_key = os.getenv("secretkey")
 
 
 
@@ -30,12 +30,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    flash(" TEST ") # TEST FLASHING MESSAGE
     query = ("SELECT * FROM devices")
     cursor.execute(query)
     devices = []
     for device in cursor:
         devices.append(device)
-
+    
 
     return render_template('index.html',devices = devices)
 
@@ -43,7 +44,6 @@ def index():
 
 @app.route('/device/<deviceid>/')
 def entries(deviceid):
-
     query =  ("SELECT * FROM devices WHERE id = " + deviceid )
     cursor.execute(query)
     devices = []
