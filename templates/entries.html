@@ -13,6 +13,16 @@
 
         <div class="text-center">
             <h1>SMART BIN {{ device[1] }}</h1>
+            <form onsubmit="changemaxdistance( {{ deviceid }})">
+                <div>
+                    <label>Change max value. Current = {{ maxdistance }}</label>
+                    <input step=".01" required type="number" min="0" max="40" id="changedistancevalue"></input>
+                    <input type=submit>
+                    </input>
+                </div>
+            </form>
+
+
             <div>
                 <iframe src="/api/drawplot/{{ device[0] }}" style="width: 700px; height: 700px"></iframe>
             </div>
@@ -27,6 +37,26 @@
 
         </div>
     </div>
+
+    <script>
+
+        function changemaxdistance(deviceid) {
+
+            maxdistance = document.getElementById("changedistancevalue").value;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("maxdistance changed");
+                }
+                else if (this.readyState == 4 && this.status != 200) {
+                    alert("Error reported, Status code " + this.status);
+                }
+            }
+            xhttp.open("POST", "/api/changemaxdistance/", false);
+            xhttp.setRequestHeader('Content-type', 'application/json');
+            xhttp.send(JSON.stringify({ "maxdistance": maxdistance, "deviceid": deviceid }));
+
+        }</script>
 
 </body>
 {% endblock %}

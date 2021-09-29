@@ -1,5 +1,5 @@
 from flask import Flask,flash
-from flask import render_template, url_for
+from flask import render_template, url_for , request
 
 import mysql.connector
 from dotenv import load_dotenv
@@ -49,7 +49,7 @@ def index():
 
 #db.close()
 
-@app.route('/device/<deviceid>/')
+@app.route('/entries/<deviceid>/')
 def entries(deviceid):
     query =  ("SELECT * FROM devices WHERE id = " + deviceid )
     cursor.execute(query)
@@ -57,6 +57,7 @@ def entries(deviceid):
     for device in cursor:
         devices.append(device)
     device = devices[0]
+    maxdistance = device[3]
 
 
     query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
@@ -65,7 +66,7 @@ def entries(deviceid):
     for entry in cursor:
         entries.append(entry)
 
-    return render_template("entries.html", device=device,entries= entries)
+    return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,deviceid=deviceid)
 
 
 @app.route("/api/drawplot/<deviceid>")
@@ -75,7 +76,6 @@ def drawplot(deviceid):
     cursor.execute(query)
 
     maxdistance = -1
-
     for entry in cursor:
         maxdistance = int(entry[0])
 
@@ -94,14 +94,29 @@ def drawplot(deviceid):
 
 
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
+    plt.ylim([0, maxdistance+1])
     ax.plot(timings, distances)  # Plot some data on the axes.=
     ax.plot(timings,maxdistancerepeated)
-    html_str = mpld3.fig_to_html(fig)
-    print(deviceid)
+    
 
-    '''
-    Html_file= open("templates/test.html","w")
-    Html_file.write(html_str)
-    Html_file.close()
-    '''
+    html_str = mpld3.fig_to_html(fig)
+
     return html_str
+
+
+    
+@app.route("/api/changemaxdistance/", methods=['POST'])
+def changemaxdistance():
+    r = request.get_json()
+    maxdistance = r["maxdistance"]
+    deviceid = r["deviceid"]
+    print(maxdistance)
+
+    query = "UPDATE devices SET max_distance = " + str(maxdistance) + " WHERE id = " + str(deviceid)
+    
+    cursor.execute(query)
+    db.commit()
+
+    print("device id = " + str(deviceid))
+
+    return '',200
