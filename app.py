@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mpld3
 
-
+from forms import changemaxdistanceform 
 
 
 load_dotenv()
@@ -74,7 +74,7 @@ def index():
 
 #db.close()
 
-@app.route('/entries/<deviceid>/')
+@app.route('/entries/<deviceid>/', methods=['GET', 'POST'])
 def entries(deviceid):
     query =  ("SELECT * FROM devices WHERE id = " + deviceid )
     cursor.execute(query)
@@ -90,8 +90,17 @@ def entries(deviceid):
     entries = []
     for entry in cursor:
         entries.append(entry)
+    maxdistform = changemaxdistanceform()
+    if maxdistform.validate_on_submit():
+        newmaxdistance = maxdistform.maxDistance.data
+        #print("new max distance " + str(newmaxdistance))
+        query = "UPDATE devices SET max_distance = " + str(newmaxdistance) + " WHERE id = " + str(deviceid)
+        cursor.execute(query)
+        db.commit()
 
-    return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,deviceid=deviceid)
+
+    return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
+    deviceid=deviceid,maxdistform=maxdistform)
 
 
 @app.route("/api/drawplot/<deviceid>")
@@ -104,7 +113,7 @@ def drawplot(deviceid):
     for entry in cursor:
         maxdistance = int(entry[0])
 
-    print("max distance = " + str(maxdistance))
+    #print("max distance = " + str(maxdistance))
     
     query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
     cursor.execute(query)
@@ -129,7 +138,8 @@ def drawplot(deviceid):
     return html_str
 
 
-    
+#changed impl to forms, but will keep this here just in case
+'''
 @app.route("/api/changemaxdistance/", methods=['POST'])
 def changemaxdistance():
     r = request.get_json()
@@ -145,7 +155,7 @@ def changemaxdistance():
     print("device id = " + str(deviceid))
 
     return '',200
-
+'''
 
 
 # Additional support functions
