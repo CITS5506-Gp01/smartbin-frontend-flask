@@ -4,7 +4,8 @@ from flask import render_template, url_for , request
 import mysql.connector
 from dotenv import load_dotenv
 import os
-
+import matplotlib
+matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 import numpy as np
 import mpld3
