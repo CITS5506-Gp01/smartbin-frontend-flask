@@ -45,19 +45,24 @@ def index():
         devices.append(device)
     for items in devices:
         device_maxDistance = items[3]
-        current_maxdistance = check_device_current_distance(items[0]) # Check each device's current recorded max distance
-        volume_percentage = calculate_dis(device_maxDistance,current_maxdistance)
-        if volume_percentage >= "{:.0%}".format(10): # Need to change later
-            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+        current_mindistance = check_device_current_distance(items[0]) # Check each device's current recorded min distance
+        volume_percentage = calculate_dis(device_maxDistance,current_mindistance)
+        record_date = get_record_date(items[0])
+        if volume_percentage >= "{:.0%}".format(30): # Need to change later, Test Flash
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
+            Infor = "Clean actions required"
             flash( Message)
+            flash(Infor)
         elif volume_percentage >= "{:.0%}".format(50):
-            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
             flash(Message)
         elif volume_percentage >= "{:.0%}".format(70):
-            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
+            Infor = "Clean actions required"
             flash(Message)
+            flash(Infor)
         elif volume_percentage >= "{:.0%}".format(90):
-            Message = "Warning: The Bin: {0} is almost full, please empty the bin ASAP".format(items[1])
+            Message = "Warning! The Bin: {0} is almost full, please empty the bin ASAP".format(items[1])
             flash(Message)
         else:
             Message = "Nothing to worry about"
@@ -145,17 +150,25 @@ def changemaxdistance():
 
 # Additional support functions
 
-def calculate_dis(MaxDistance,Current):
-    current_hight = MaxDistance - Current
-    percentage = current_hight / MaxDistance
+def calculate_dis(MinDistance,Current):
+    current_hight = MinDistance - Current
+    percentage = current_hight / MinDistance
     result = "{:.0%}".format(percentage)
     return result
 
 
 def check_device_current_distance(DeviceID):
-    query = ("SELECT MAX(distance) FROM distances Where device_id = " + str(DeviceID))
+    query = ("SELECT MIN(distance) FROM distances WHERE device_id = " + str(DeviceID))
     cursor.execute(query)
     current = []
     for datas in cursor:
         current.append(datas)
     return current[0][0]
+
+def get_record_date(DeviceID):
+    query = ("SELECT logged_datetime FROM distances WHERE distance = (SELECT MAX(distance) FROM distances WHERE device_id =" + str(DeviceID) + ")")
+    cursor.execute(query)
+    date = []
+    for datas in cursor:
+        date.append(datas)
+    return date[0][0]
