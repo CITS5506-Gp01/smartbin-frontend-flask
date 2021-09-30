@@ -38,12 +38,31 @@ app.secret_key = os.getenv("secretkey")
 
 @app.route('/')
 def index():
-    flash(" TEST ") # TEST FLASHING MESSAGE
     query = ("SELECT * FROM devices")
     cursor.execute(query)
     devices = []
     for device in cursor:
         devices.append(device)
+    for items in devices:
+        device_maxDistance = items[3]
+        current_maxdistance = check_device_current_distance(items[0]) # Check each device's current recorded max distance
+        volume_percentage = calculate_dis(device_maxDistance,current_maxdistance)
+        if volume_percentage >= "{:.0%}".format(10): # Need to change later
+            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+            flash( Message)
+        elif volume_percentage >= "{:.0%}".format(50):
+            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+            flash(Message)
+        elif volume_percentage >= "{:.0%}".format(70):
+            Message = "Alert: The Bin: {0} volume has reached {1}".format(items[1],volume_percentage)
+            flash(Message)
+        elif volume_percentage >= "{:.0%}".format(90):
+            Message = "Warning: The Bin: {0} is almost full, please empty the bin ASAP".format(items[1])
+            flash(Message)
+        else:
+            Message = "Nothing to worry about"
+            flash(Message)
+
     
 
     return render_template('index.html',devices = devices)
@@ -121,3 +140,22 @@ def changemaxdistance():
     print("device id = " + str(deviceid))
 
     return '',200
+
+
+
+# Additional support functions
+
+def calculate_dis(MaxDistance,Current):
+    current_hight = MaxDistance - Current
+    percentage = current_hight / MaxDistance
+    result = "{:.0%}".format(percentage)
+    return result
+
+
+def check_device_current_distance(DeviceID):
+    query = ("SELECT MAX(distance) FROM distances Where device_id = " + str(DeviceID))
+    cursor.execute(query)
+    current = []
+    for datas in cursor:
+        current.append(datas)
+    return current[0][0]
