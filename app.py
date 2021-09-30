@@ -166,7 +166,7 @@ def check_device_current_distance(DeviceID):
     return current[0][0]
 
 def get_record_date(DeviceID):
-    query = ("SELECT logged_datetime FROM distances WHERE distance = (SELECT MAX(distance) FROM distances WHERE device_id =" + str(DeviceID) + ")")
+    query = ("SELECT logged_datetime FROM distances WHERE distance = (SELECT MIN(distance) FROM distances WHERE device_id =" + str(DeviceID) + ")")
     cursor.execute(query)
     date = []
     for datas in cursor:
