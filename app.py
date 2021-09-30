@@ -1,5 +1,5 @@
 from flask import Flask,flash
-from flask import render_template, url_for , request
+from flask import render_template, url_for , request,redirect
 
 import mysql.connector
 from dotenv import load_dotenv
@@ -9,6 +9,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import mpld3
+import time
 
 from forms import changemaxdistanceform 
 
@@ -90,6 +91,8 @@ def entries(deviceid):
     entries = []
     for entry in cursor:
         entries.append(entry)
+
+    maxdistanceinentries = getMaxDistInEntries(deviceid)
     maxdistform = changemaxdistanceform()
     if maxdistform.validate_on_submit():
         newmaxdistance = maxdistform.maxDistance.data
@@ -97,10 +100,12 @@ def entries(deviceid):
         query = "UPDATE devices SET max_distance = " + str(newmaxdistance) + " WHERE id = " + str(deviceid)
         cursor.execute(query)
         db.commit()
-
+        return redirect(url_for('entries',deviceid=deviceid))
+    
+    print(maxdistance)
 
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
-    deviceid=deviceid,maxdistform=maxdistform)
+    deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries)
 
 
 @app.route("/api/drawplot/<deviceid>")
@@ -182,3 +187,11 @@ def get_record_date(DeviceID):
     for datas in cursor:
         date.append(datas)
     return date[0][0]
+
+def getMaxDistInEntries(deviceid):
+   query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
+   cursor.execute(query)
+   current = []
+   for entry in cursor:
+       current.append(entry)
+   return current[0][0]

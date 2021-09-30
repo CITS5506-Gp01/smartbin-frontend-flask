@@ -16,7 +16,8 @@
 
             <form action="" method="post">
                 {{ maxdistform.hidden_tag() }}
-                <p>{{ maxdistform.maxDistance.label }} is currently {{ maxdistance }} <br>
+                <p> Current Max distance is {{ maxdistance }} <br>
+                    Max recorded distance is {{ maxdistanceinentries }} <br>
                     {{ maxdistform.maxDistance( type="number", min="0", max="40",step=".01") }}
                     {{ maxdistform.submit }}
                 </p>

@@ -51,4 +51,19 @@ for item in cursor:
    print(item)
 
 
+
+
+
+
+def getMaxDistInEntries(deviceid):
+   query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
+   cursor.execute(query)
+   current = []
+   for entry in cursor:
+       current.append(entry)
+   print(current[0][0])
+   return current[0][0]
+
+getMaxDistInEntries(1)
+
 db.close()
