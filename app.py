@@ -150,9 +150,9 @@ def changemaxdistance():
 
 # Additional support functions
 
-def calculate_dis(MinDistance,Current):
-    current_hight = MinDistance - Current
-    percentage = current_hight / MinDistance
+def calculate_dis(MaxDistance,Current):
+    current_hight = MaxDistance - Current
+    percentage = current_hight / MaxDistance
     result = "{:.0%}".format(percentage)
     return result
 
