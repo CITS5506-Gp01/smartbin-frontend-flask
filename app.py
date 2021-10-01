@@ -2,7 +2,7 @@ from flask import Flask,flash
 from flask import render_template, url_for , request,redirect
 
 import mysql.connector
-from dotenv import load_dotenv
+
 import os
 import matplotlib
 matplotlib.use('Agg') 
@@ -13,7 +13,7 @@ import time
 
 from forms import changemaxdistanceform 
 
-
+from dotenv import load_dotenv
 load_dotenv()
 
 user=os.getenv("user")
@@ -68,6 +68,7 @@ def index():
         else:
             Message = "Nothing to worry about"
             flash(Message)
+    db.commit()
 
     
 
@@ -101,7 +102,6 @@ def entries(deviceid):
         cursor.execute(query)
         db.commit()
         return redirect(url_for('entries',deviceid=deviceid))
-    
     print(maxdistance)
 
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
@@ -118,26 +118,28 @@ def drawplot(deviceid):
     for entry in cursor:
         maxdistance = int(entry[0])
 
+    #db.close()
     #print("max distance = " + str(maxdistance))
-    
+    #db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+
     query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
     cursor.execute(query)
     maxdistancerepeated= []
     distances = []
     timings = []
-
+    
     for entry in cursor:
         distances.append(maxdistance - entry[3])
         timings.append(entry[2])
         maxdistancerepeated.append(maxdistance)
 
-
+    print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
     plt.ylim([0, maxdistance+1])
     ax.plot(timings, distances)  # Plot some data on the axes.=
     ax.plot(timings,maxdistancerepeated)
     
-
+    db.commit()
     html_str = mpld3.fig_to_html(fig)
 
     return html_str
@@ -162,13 +164,17 @@ def changemaxdistance():
     return '',200
 '''
 
-
+'''
+@app.route("/api/returnbinsthatarefillingup",methods = ["GET"])
+def returnbinsthatarefillingup:
+    print("todolol")
 # Additional support functions
-
+'''
 def calculate_dis(MaxDistance,Current):
     current_hight = MaxDistance - Current
     percentage = current_hight / MaxDistance
     result = "{:.0%}".format(percentage)
+    db.commit()
     return result
 
 
@@ -178,6 +184,8 @@ def check_device_current_distance(DeviceID):
     current = []
     for datas in cursor:
         current.append(datas)
+    db.commit()
+
     return current[0][0]
 
 def get_record_date(DeviceID):
@@ -186,12 +194,16 @@ def get_record_date(DeviceID):
     date = []
     for datas in cursor:
         date.append(datas)
+    db.commit()
+
     return date[0][0]
 
 def getMaxDistInEntries(deviceid):
-   query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
-   cursor.execute(query)
-   current = []
-   for entry in cursor:
+    query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
+    cursor.execute(query)
+    current = []
+    for entry in cursor:
        current.append(entry)
-   return current[0][0]
+    db.commit()
+
+    return current[0][0]
