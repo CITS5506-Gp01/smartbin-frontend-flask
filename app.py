@@ -112,7 +112,7 @@ def entries(deviceid):
         db.commit()
         return redirect(url_for('entries',deviceid=deviceid))
     print(maxdistance)
-
+    db.commit()
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
     deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries)
 
