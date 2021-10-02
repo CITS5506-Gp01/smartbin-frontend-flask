@@ -1,0 +1,4 @@
+export $(xargs < testenvironment)
+set -o allexport;
+source testenvironment;
+set +o allexport;

@@ -1,7 +1,7 @@
 from flask import Flask,flash
 from flask import render_template, url_for , request,redirect
 
-import mysql.connector
+import mysql.connector  
 
 import os
 import matplotlib
@@ -13,8 +13,10 @@ import time
 
 from forms import changemaxdistanceform 
 
+''' 
 from dotenv import load_dotenv
 load_dotenv()
+'''
 
 user=os.getenv("user")
 password=os.getenv("password")
@@ -23,6 +25,13 @@ database=os.getenv("database")
 port=os.getenv("port")
 
 
+'''
+print(user)
+print(password)
+print(host)
+print(database)
+print(port)
+'''
 
 db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
 

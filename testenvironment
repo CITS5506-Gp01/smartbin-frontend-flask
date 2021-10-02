@@ -1,0 +1,7 @@
+FLASK_DEBUG=True
+user=common
+password=gslpw1FSIT56zI4Q
+host=db-iot-cits5506-do-user-7782401-0.b.db.ondigitalocean.com
+database=smartbin
+port=25060
+secretkey=thisisaverylongsecretkey
