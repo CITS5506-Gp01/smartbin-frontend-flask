@@ -53,36 +53,48 @@ def index():
     devices = []
     for device in cursor:
         devices.append(device)
-    for items in devices:
-        device_maxDistance = items[3]
-        current_mindistance = check_device_current_distance(items[0]) # Check each device's current recorded min distance
-        volume_percentage = calculate_dis(device_maxDistance,current_mindistance)
-        record_date = get_record_date(items[0])
-        if volume_percentage >= "{:.0%}".format(30): # Need to change later, Test Flash
-            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
-            Infor = "Clean actions required"
-            flash( Message)
-            flash(Infor)
-        elif volume_percentage >= "{:.0%}".format(50):
-            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
-            flash(Message)
-        elif volume_percentage >= "{:.0%}".format(70):
-            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2}".format(items[1],volume_percentage,record_date)
-            Infor = "Clean actions required"
-            flash(Message)
-            flash(Infor)
-        elif volume_percentage >= "{:.0%}".format(90):
-            Message = "Warning! The Bin: {0} is almost full, please empty the bin ASAP".format(items[1])
-            flash(Message)
-        else:
-            Message = "Nothing to worry about"
-            flash(Message)
     db.commit()
 
     
 
     return render_template('index.html',devices = devices)
 
+@app.route('/Alert', methods=['GET','POST'])
+def alert():
+    query = ("SELECT * FROM devices")
+    cursor.execute(query)
+    devices = []
+    for device in cursor:
+        devices.append(device)
+    for items in devices:
+        device_maxDistance = items[3]
+        current_mindistance = check_device_current_distance(items[0]) # Check each device's current recorded min distance
+        volume_percentage = calculate_dis(device_maxDistance,current_mindistance)
+        record_date = get_record_date(items[0])
+        if volume_percentage >= "{:.0%}".format(30) and volume_percentage <= "{:.0%}".format(50): # Need to change later, Test Flash
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Pretty Clean!".format(items[1],volume_percentage,record_date)
+            return Message
+            #flash( Message)
+            #flash(Infor)
+        elif volume_percentage >= "{:.0%}".format(50) and volume_percentage <= "{:.0%}".format(70):
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Need attention!".format(items[1],volume_percentage,record_date)
+            return Message
+            #flash(Message)
+        elif volume_percentage >= "{:.0%}".format(70) and volume_percentage <= "{:.0%}".format(90):
+            Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Better to have a look! ".format(items[1],volume_percentage,record_date)
+            Infor = "Clean actions required"
+            return Message
+            #flash(Message)
+            #flash(Infor)
+        elif volume_percentage >= "{:.0%}".format(90):
+            Message = "Warning! The Bin: {0} is almost full, please empty the bin ASAP! ".format(items[1])
+            return Message
+            #flash(Message)
+        else:
+            Message = "Nothing to worry about"
+            return Message
+            #flash(Message)
+    db.commit()
 #db.close()
 
 @app.route('/entries/<deviceid>/', methods=['GET', 'POST'])

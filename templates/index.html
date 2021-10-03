@@ -18,8 +18,9 @@
             {% endfor %}
         </div>
     </div>
-    <div class="contianer">
+    <div class="container">
         <div style="text-align:center; color: red;"><br>
+            <span id="alertmessage"></span>
             {% with messages = get_flashed_messages() %} 
                 {% if messages %} 
                     {% for message in messages %}
