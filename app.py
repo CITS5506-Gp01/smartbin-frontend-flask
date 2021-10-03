@@ -146,19 +146,35 @@ def drawplot(deviceid):
     query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
     cursor.execute(query)
     maxdistancerepeated= []
+    onethirdthresholdrepeated = []
+    twothirdsthresholdrepeated = []
     distances = []
     timings = []
     
+    drawthresholds = True
+
     for entry in cursor:
         distances.append(maxdistance - entry[3])
         timings.append(entry[2])
         maxdistancerepeated.append(maxdistance)
+        if drawthresholds == True:
+            third = maxdistance/3
+            onethirdthresholdrepeated.append(third)
+            twothirds = third*2
+            twothirdsthresholdrepeated.append(twothirds)
+
+
+
+
 
     print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
     plt.ylim([0, maxdistance+1])
-    ax.plot(timings, distances)  # Plot some data on the axes.=
-    ax.plot(timings,maxdistancerepeated)
+    ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.=
+    ax.plot(timings,maxdistancerepeated,color="red")
+    if drawthresholds == True:
+        ax.plot(timings, onethirdthresholdrepeated,color="green") 
+        ax.plot(timings,twothirdsthresholdrepeated,color="orange")
     
     db.commit()
     html_str = mpld3.fig_to_html(fig)

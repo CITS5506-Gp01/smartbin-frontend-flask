@@ -1,4 +1,4 @@
-export $(xargs < testenvironment)
+export $(xargs < notenv)
 set -o allexport;
 source testenvironment;
 set +o allexport;
