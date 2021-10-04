@@ -58,7 +58,7 @@ def index():
     
 
 
-    return render_template('index.html',devices = devices,getlatestdistancevalue=getlatestdistancevalue)
+    return render_template('index.html',devices = devices,getlatestdistancevalue=getlatestdistancevalue,format=format)
 
 @app.route('/Alert', methods=['GET','POST'])
 def alert():
@@ -170,7 +170,7 @@ def drawplot(deviceid):
 
     print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
-    plt.ylim([-1, maxdistance+1])
+    plt.ylim([0, maxdistance+1])
     ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.=
     ax.plot(timings,maxdistancerepeated,color="red")
     if drawthresholds == True:

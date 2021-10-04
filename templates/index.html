@@ -13,8 +13,8 @@
 
             {% for device in devices %}
             {{ device[1] }}
-            {% set currentpercentage=(device[3] - getlatestdistancevalue(device[0]))/device[3] %}
-            current level {{ currentpercentage }}
+            {% set currentpercentage= format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f") %}
+            current level = {{ currentpercentage }}%
             <a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
             {% endfor %}
         </div>
