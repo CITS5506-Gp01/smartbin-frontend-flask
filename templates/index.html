@@ -13,7 +13,7 @@
 
             {% for device in devices %}
             {{ device[1] }}
-            {{ device[0] }}
+            current level {{ check_device_current_distance(device[0]  )}}
             <a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
             {% endfor %}
         </div>

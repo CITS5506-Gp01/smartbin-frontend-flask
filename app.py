@@ -57,7 +57,7 @@ def index():
 
     
 
-    return render_template('index.html',devices = devices)
+    return render_template('index.html',devices = devices,check_device_current_distance=check_device_current_distance)
 
 @app.route('/Alert', methods=['GET','POST'])
 def alert():
@@ -175,6 +175,8 @@ def drawplot(deviceid):
     if drawthresholds == True:
         ax.plot(timings, onethirdthresholdrepeated,color="green") 
         ax.plot(timings,twothirdsthresholdrepeated,color="orange")
+
+    
     
     db.commit()
     html_str = mpld3.fig_to_html(fig)

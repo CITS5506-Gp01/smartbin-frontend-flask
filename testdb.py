@@ -73,13 +73,16 @@ getMaxDistInEntries(1)
 
 
 
-
+'''
 query = ("SELECT * FROM gps")
 cursor.execute(query)
 
 for item in cursor:
    print(item)
-
+'''
+#query = ("ALTER TABLE devices ADD COLUMN longtitude DECIMAL(8,5) NOT NULL;")
+#cursor.execute(query)
+db.commit()
 
 
 db.close()
