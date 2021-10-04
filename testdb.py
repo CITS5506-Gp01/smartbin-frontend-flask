@@ -71,4 +71,15 @@ def getMaxDistInEntries(deviceid):
 
 getMaxDistInEntries(1)
 
+
+
+
+query = ("SELECT * FROM gps")
+cursor.execute(query)
+
+for item in cursor:
+   print(item)
+
+
+
 db.close()
