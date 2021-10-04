@@ -25,16 +25,17 @@ database=os.getenv("database")
 port=os.getenv("port")
 
 
-'''
+
 print(user)
 print(password)
 print(host)
 print(database)
 print(port)
-'''
+
 
 db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
 
+print(" connected ")
 cursor=db.cursor()
 
 
@@ -54,10 +55,10 @@ def index():
     for device in cursor:
         devices.append(device)
     db.commit()
-
     
 
-    return render_template('index.html',devices = devices,check_device_current_distance=check_device_current_distance)
+
+    return render_template('index.html',devices = devices,getlatestdistancevalue=getlatestdistancevalue)
 
 @app.route('/Alert', methods=['GET','POST'])
 def alert():
@@ -137,7 +138,7 @@ def drawplot(deviceid):
 
     maxdistance = -1
     for entry in cursor:
-        maxdistance = int(entry[0])
+        maxdistance = entry[0]
 
     #db.close()
     #print("max distance = " + str(maxdistance))
@@ -169,7 +170,7 @@ def drawplot(deviceid):
 
     print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
-    plt.ylim([0, maxdistance+1])
+    plt.ylim([-1, maxdistance+1])
     ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.=
     ax.plot(timings,maxdistancerepeated,color="red")
     if drawthresholds == True:
@@ -246,3 +247,13 @@ def getMaxDistInEntries(deviceid):
     db.commit()
 
     return current[0][0]
+
+def getlatestdistancevalue(deviceid):
+    entries = []
+    query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+    cursor.execute(query)
+    for item in cursor:
+        entries.append(item)
+
+    latest = max(entries)
+    return(latest[3])
