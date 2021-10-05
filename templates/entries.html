@@ -13,6 +13,12 @@
 
         <div class="text-center">
             <h1>SMART BIN {{ device[1] }}</h1>
+            {% if device[4] %}
+            <p> location {{ device[4] }} {{ device[5] }}</p>
+            {% else %}
+            <p> location unknown</p>
+            {% endif  %}
+            
 
             <form action="" method="post">
                 {{ maxdistform.hidden_tag() }}

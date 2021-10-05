@@ -73,13 +73,41 @@ getMaxDistInEntries(1)
 
 
 
-
+'''
 query = ("SELECT * FROM gps")
 cursor.execute(query)
 
 for item in cursor:
    print(item)
+'''
+#query = ("ALTER TABLE devices ADD COLUMN longtitude DECIMAL(8,5) NOT NULL;")
+#cursor.execute(query)
 
+query = ("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'distances'")
+cursor.execute(query)
+for item in cursor:
+   print(item)
+
+
+
+
+def getlatestdistancevalue(deviceid):
+   entries = []
+   query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+   cursor.execute(query)
+   for item in cursor:
+      #print(item)
+      entries.append(item)
+
+   latest = max(entries)
+   #print("latest")
+   #print(latest[3])
+   return(latest[3])
+
+getlatestdistancevalue(1)
+
+
+db.commit()
 
 
 db.close()
