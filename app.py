@@ -216,7 +216,7 @@ def calculate_dis(MaxDistance,Current):
 
 
 def check_device_current_distance(DeviceID):
-    query = ("SELECT MIN(distance) FROM distances WHERE device_id = " + str(DeviceID))
+    query = ("SELECT distance FROM distances WHERE device_id = " + str(DeviceID) + " ORDER BY id DESC limit 1")
     cursor.execute(query)
     current = []
     for datas in cursor:

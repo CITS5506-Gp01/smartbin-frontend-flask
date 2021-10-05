@@ -29,13 +29,20 @@ message in messages %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        setInterval("makeflash()",5000); // call every 5 seconds
+        time_range = 5000; // call every 5 seconds
+        setInterval(makeflash,time_range);
     });
     
     function makeflash() { 
-      //reload result into element with id "sysStatus"
+      //reload result into element
       $("#alertmessage").load("/Alert");
-    
+      $("#Gotbutton").show();
+      $("#alertmessage").show();
     }
-    </script>
+
+    function removealert(){
+        document.getElementById('alertmessage').style.display = 'none';
+        document.getElementById('Gotbutton').style.display = 'none';
+    }
+</script>
 </html>
