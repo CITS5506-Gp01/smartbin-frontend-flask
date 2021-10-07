@@ -13,6 +13,7 @@
 
         <div class="text-center">
             <h1>SMART BIN {{ device[1] }}</h1>
+            <p>Current percentage = {{ currentpercentage }}% </p>
             {% if device[4] %}
             <p> location {{ device[4] }} {{ device[5] }}</p>
             {% else %}
@@ -33,6 +34,7 @@
 
 
             </form>
+
             {#
             <!--
             <form onsubmit="changemaxdistance( {{ deviceid }})">

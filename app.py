@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mpld3
 import time
+import datetime
 
 from forms import changemaxdistanceform 
 
@@ -115,6 +116,9 @@ def entries(deviceid):
     for entry in cursor:
         entries.append(entry)
 
+    currentdistance = getlatestdistancevalue(deviceid)
+    currentpercentage = format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f")
+
     maxdistanceinentries = getMaxDistInEntries(deviceid)
     maxdistform = changemaxdistanceform()
     if maxdistform.validate_on_submit():
@@ -127,7 +131,7 @@ def entries(deviceid):
     print(maxdistance)
     db.commit()
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
-    deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries)
+    deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage)
 
 
 @app.route("/api/drawplot/<deviceid>")
@@ -171,7 +175,7 @@ def drawplot(deviceid):
     print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
     plt.ylim([0, maxdistance+1])
-    ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.=
+    ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.
     ax.plot(timings,maxdistancerepeated,color="red")
     if drawthresholds == True:
         ax.plot(timings, onethirdthresholdrepeated,color="green") 
@@ -249,11 +253,19 @@ def getMaxDistInEntries(deviceid):
     return current[0][0]
 
 def getlatestdistancevalue(deviceid):
-    entries = []
-    query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
-    cursor.execute(query)
-    for item in cursor:
-        entries.append(item)
+   entries = []
+   query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+   cursor.execute(query)
+   maxtime = datetime.datetime(1970, 1, 1)
+   
+   entry = -1
+   for item in cursor:      
+      entrytime = item[2]
 
-    latest = max(entries)
-    return(latest[3])
+      if(entrytime > maxtime):
+         maxtime = entrytime
+         entry = item
+
+
+   print(entry[3])
+   return(entry[3])

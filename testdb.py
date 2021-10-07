@@ -1,6 +1,7 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+import datetime
 
 
 
@@ -82,27 +83,33 @@ for item in cursor:
 '''
 #query = ("ALTER TABLE devices ADD COLUMN longtitude DECIMAL(8,5) NOT NULL;")
 #cursor.execute(query)
-
+'''
 query = ("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'distances'")
 cursor.execute(query)
 for item in cursor:
    print(item)
 
-
+'''
 
 
 def getlatestdistancevalue(deviceid):
    entries = []
    query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
    cursor.execute(query)
-   for item in cursor:
-      #print(item)
-      entries.append(item)
+   maxtime = datetime.datetime(1970, 1, 1)
+   
+   entry = -1
+   for item in cursor:      
+      entrytime = item[2]
 
-   latest = max(entries)
-   #print("latest")
-   #print(latest[3])
-   return(latest[3])
+      if(entrytime > maxtime):
+         maxtime = entrytime
+         entry = item
+
+
+   print(entry[3])
+   return(entry[3])
+   
 
 getlatestdistancevalue(1)
 
