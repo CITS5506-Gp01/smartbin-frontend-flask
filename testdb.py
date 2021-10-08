@@ -56,6 +56,15 @@ cursor.execute(query)
 for item in cursor:
    print(item)
 
+print("temperature")
+
+query = ("SELECT * FROM temperature")
+cursor.execute(query)
+
+for item in cursor:
+   print(item)
+
+
 
 
 
@@ -69,6 +78,8 @@ def getMaxDistInEntries(deviceid):
        current.append(entry)
    print(current[0][0])
    return current[0][0]
+
+   db.commit()
 
 getMaxDistInEntries(1)
 

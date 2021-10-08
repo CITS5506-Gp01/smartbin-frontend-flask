@@ -253,19 +253,19 @@ def getMaxDistInEntries(deviceid):
     return current[0][0]
 
 def getlatestdistancevalue(deviceid):
-   entries = []
-   query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
-   cursor.execute(query)
-   maxtime = datetime.datetime(1970, 1, 1)
-   
-   entry = -1
-   for item in cursor:      
-      entrytime = item[2]
-
-      if(entrytime > maxtime):
-         maxtime = entrytime
-         entry = item
-
-
-   print(entry[3])
-   return(entry[3])
+    entries = []
+    query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+    cursor.execute(query)
+    maxtime = datetime.datetime(1970, 1, 1)
+    
+    entry = -1
+    for item in cursor:      
+        entrytime = item[2]
+        if(entrytime > maxtime):
+            maxtime = entrytime
+            entry = item
+    
+    
+    print(entry[3])
+    db.commit() 
+    return(entry[3])
