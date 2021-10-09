@@ -25,7 +25,7 @@
                 {{ maxdistform.hidden_tag() }}
                 <p> Current Max distance is {{ maxdistance }} <br>
                     Max recorded distance is {{ maxdistanceinentries }} <br>
-                    {{ maxdistform.maxDistance( type="number", min="0", max="40",step=".01") }}
+                    {{ maxdistform.maxDistance( type="number", min="0", max="100",step=".01") }}
                     {{ maxdistform.submit }}
                 </p>
                 {% for error in maxdistform.maxDistance.errors %}
@@ -48,27 +48,43 @@
         -->
             #}
             <div>
-                <label for="changegraphstartdate">Select Start Date</label>
-                <input type="datetime-local" id="changegraphstartdate" name="changegraphstartdate">
+                <h3>Distances</h3>
+                <div>
+                    <label for="changegraphstartdate">Select Start Date</label>
+                    <input type="datetime-local" id="changegraphstartdate" name="changegraphstartdate">
 
-                <label for="changegraphenddate">Select End Date</label>
-                <input type="datetime-local" id="changegraphenddate" name="changegraphenddate">
+                    <label for="changegraphenddate">Select End Date</label>
+                    <input type="datetime-local" id="changegraphenddate" name="changegraphenddate">
+                </div>
+                <div>
+                    <input type="button" onclick="changegraphdates(1)" value="update distance graph">
+                </div>
+                <div>
+                    <iframe src="/api/drawplot/{{ device[0] }}/0/0" id=distanceplot
+                        style="width: 700px; height: 700px"></iframe>
+                </div>
+
             </div>
+
+
             <div>
-                <input type="button" onclick="changegraphdates(1)" value="update graph">
-            </div>
-            <div>
-                <iframe src="/api/drawplot/{{ device[0] }}/0/0" id=distanceplot
-                    style="width: 700px; height: 700px"></iframe>
-            </div>
-            <div>
-                {% for entry in entries %}
-                <p>Distance at {{ entry[2] }} is {{ entry[3] }} cm</p>
+                <h3>Temperatures</h3>
+                <div>
+                    <label for="changetempgraphstartdate">Select Start Date</label>
+                    <input type="datetime-local" id="changetempgraphstartdate"
+                        name="changetempgraphstartdatechangetempgraphstartdate">
 
-                {% endfor %}
-
+                    <label for="changetempgraphenddate">Select End Date</label>
+                    <input type="datetime-local" id="changetempgraphenddate" name="changetempgraphenddate">
+                </div>
+                <div>
+                    <input type="button" onclick="changetempgraphdates(1)" value="update temperature graph">
+                </div>
+                <div>
+                    <iframe src="/api/drawtemperatureplot/{{ device[0] }}/0/0" id="temperatureplot"
+                        style="width: 700px; height: 700px"></iframe>
+                </div>
             </div>
-
 
         </div>
     </div>
@@ -101,7 +117,20 @@
                 console.log(startdate);
                 console.log(enddate);
                 //alert(date);
-                document.getElementById("distanceplot").src = "/api/drawplot/{{ device[0] }}/" + startdate + "/" + enddate + "/";
+                document.getElementById("distanceplot").src = "/api/drawplot/" + deviceid + "/" + startdate + "/" + enddate + "/";
+            }
+
+        }
+
+        function changetempgraphdates(deviceid) {
+
+            startdate = document.getElementById("changetempgraphstartdate").value;
+            enddate = document.getElementById("changetempgraphenddate").value;
+            if (startdate && enddate) {
+                console.log(startdate);
+                console.log(enddate);
+                //alert(date);
+                document.getElementById("temperatureplot").src = "/api/drawtemperatureplot/" + deviceid + "/" + startdate + "/" + enddate + "/";
             }
 
         }

@@ -34,10 +34,11 @@ print(database)
 print(port)
 
 
-db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+#db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
 
 print(" connected ")
-cursor=db.cursor()
+#cursor=db.cursor(buffered=True)
+
 
 
 app = Flask(__name__)
@@ -50,19 +51,22 @@ app.secret_key = os.getenv("secretkey")
 
 @app.route('/')
 def index():
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT * FROM devices")
     cursor.execute(query)
     devices = []
     for device in cursor:
         devices.append(device)
     db.commit()
-    
-
+    db.close()
 
     return render_template('index.html',devices = devices,getlatestdistancevalue=getlatestdistancevalue,format=format)
 
 @app.route('/Alert', methods=['GET','POST'])
 def alert():
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT * FROM devices")
     cursor.execute(query)
     devices = []
@@ -97,6 +101,7 @@ def alert():
             return Message
             #flash(Message)
     db.commit()
+    db.close()
 #db.close()
 
 @app.route('/BatteryRemain1', methods=['GET','POST'])
@@ -119,6 +124,8 @@ def GetBatteryStatus3():
 
 @app.route('/entries/<deviceid>/', methods=['GET', 'POST'])
 def entries(deviceid):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query =  ("SELECT * FROM devices WHERE id = " + deviceid )
     cursor.execute(query)
     devices = []
@@ -145,6 +152,7 @@ def entries(deviceid):
         query = "UPDATE devices SET max_distance = " + str(newmaxdistance) + " WHERE id = " + str(deviceid)
         cursor.execute(query)
         db.commit()
+        db.close()
         return redirect(url_for('entries',deviceid=deviceid))
     print(maxdistance)
 
@@ -157,17 +165,17 @@ def entries(deviceid):
         return redirect(url_for('entries',deviceid=deviceid))
 
     '''
-
-
-
     
     db.commit()
+    db.close()
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
     deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage)
 
 
 @app.route("/api/drawplot/<deviceid>/<startdate>/<enddate>/")
 def drawplot(deviceid,startdate,enddate):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor(buffered = True)
 
     fullstartdate = None
     fullenddate = None
@@ -215,7 +223,6 @@ def drawplot(deviceid,startdate,enddate):
             twothirdsthresholdrepeated.append(twothirds)
 
 
-    print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
     plt.ylim([0, maxdistance+1])
 
@@ -228,12 +235,71 @@ def drawplot(deviceid,startdate,enddate):
         ax.plot(timings, onethirdthresholdrepeated,color="green") 
         ax.plot(timings,twothirdsthresholdrepeated,color="orange")
 
-    
-    
+ 
     db.commit()
+    db.close()
+
     html_str = mpld3.fig_to_html(fig)
 
     return html_str
+
+
+
+
+
+
+
+@app.route("/api/drawtemperatureplot/<deviceid>/<startdate>/<enddate>/")
+def drawtemperatureplot(deviceid,startdate,enddate):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor(buffered = True)
+    fullstartdate = None
+    fullenddate = None
+    
+    try:
+        fullstartdate = splitjsdate(startdate)
+        fullenddate = splitjsdate(enddate)
+        if(fullstartdate >= fullenddate):
+            fullstartdate = None
+            fullenddate = None
+    except:
+        print("otherbadinput")
+    
+    #db.close()
+    #print("max distance = " + str(maxdistance))
+    #db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+
+    query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
+    cursor.execute(query)
+
+    temperatures = []
+    timings = []
+    
+    
+    for entry in cursor:
+        temperature =  entry[4]
+        timing = entry[2]
+        if(temperature):
+            if(temperature <= 100 and temperature > -50):
+                temperatures.append(temperature)
+                timings.append(timing)
+
+
+    fig, ax = plt.subplots()  # Create a figure containing a single axes.
+    #plt.ylim()
+
+    if(fullstartdate and fullenddate):
+        plt.xlim(fullstartdate,fullenddate)
+
+    ax.plot(timings, temperatures, color="black", marker='o')  # Plot some data on the axes.
+    db.commit()
+    db.close()
+
+    html_str = mpld3.fig_to_html(fig)
+
+    return html_str
+
+
 
 
 '''
@@ -321,44 +387,57 @@ def changemaxdistance():
 
 # Additional support functions
 def calculate_dis(MaxDistance,Current):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     current_hight = MaxDistance - Current
     percentage = current_hight / MaxDistance
     result = "{:.0%}".format(percentage)
     db.commit()
+    db.close()
     return result
 
 
 def check_device_current_distance(DeviceID):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT distance FROM distances WHERE device_id = " + str(DeviceID) + " ORDER BY id DESC limit 1")
     cursor.execute(query)
     current = []
     for datas in cursor:
         current.append(datas)
     db.commit()
+    db.close()
 
     return current[0][0]
 
 def get_record_date(DeviceID):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT logged_datetime FROM distances WHERE distance = (SELECT MIN(distance) FROM distances WHERE device_id =" + str(DeviceID) + ")")
     cursor.execute(query)
     date = []
     for datas in cursor:
         date.append(datas)
     db.commit()
+    db.close()
 
     return date[0][0]
 
 def getMaxDistInEntries(deviceid):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
     cursor.execute(query)
     current = []
     for entry in cursor:
        current.append(entry)
     db.commit()
+    db.close()
 
     return current[0][0]
 
 def getlatestdistancevalue(deviceid):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
     query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
     cursor.execute(query)
     maxtime = datetime.datetime(1970, 1, 1)
@@ -373,4 +452,5 @@ def getlatestdistancevalue(deviceid):
     
     print(entry[3])
     db.commit() 
+    db.close()
     return(entry[3])
