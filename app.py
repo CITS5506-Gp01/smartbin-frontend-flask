@@ -99,6 +99,24 @@ def alert():
     db.commit()
 #db.close()
 
+@app.route('/BatteryRemain1', methods=['GET','POST'])
+def GetBatteryStatus():
+    Battery_Remain = 100
+    if Battery_Remain >= 90:
+        return "100%"
+
+@app.route('/BatteryRemain2', methods=['GET','POST'])
+def GetBatteryStatus2():
+    Battery_Remain = 30
+    if Battery_Remain >= 30:
+        return "30%"
+
+@app.route('/BatteryRemain3', methods=['GET','POST'])
+def GetBatteryStatus3():
+    Battery_Remain = 10
+    if Battery_Remain >= 10:
+        return "10%"
+
 @app.route('/entries/<deviceid>/', methods=['GET', 'POST'])
 def entries(deviceid):
     query =  ("SELECT * FROM devices WHERE id = " + deviceid )

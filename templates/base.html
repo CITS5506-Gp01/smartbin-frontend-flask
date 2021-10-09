@@ -29,20 +29,118 @@ message in messages %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        time_range = 5000; // call every 5 seconds
+        time_range = 10000; // call every 5 seconds
         setInterval(makeflash,time_range);
+        setInterval(function(){$.get("/BatteryRemain1", function(data){
+            var status = data
+            if (status == "100%"){
+                $("#remain1").css("height", "300px");
+                $("#device1").html(status);
+            }
+        })},1000)
+        setInterval(function(){$.get("/BatteryRemain2", function(data){
+            var status = data
+            if (status == "30%"){
+                $(".remain2").css("height", "100px");
+                $("#device2").html(status);
+            }
+        })},1000)
+        setInterval(function(){$.get("/BatteryRemain3", function(data){
+            var status = data
+            if (status == "10%"){
+                $(".remain3").css("height", "50px");
+                $("#device3").html(status);
+            }
+        })},1000)
     });
     
     function makeflash() { 
       //reload result into element
       $("#alertmessage").load("/Alert");
-      $("#Gotbutton").show();
       $("#alertmessage").show();
+      $("#Gotbutton").show();
     }
 
     function removealert(){
         document.getElementById('alertmessage').style.display = 'none';
         document.getElementById('Gotbutton').style.display = 'none';
     }
+
 </script>
+<style>
+    *{
+        box-sizing: border-box;
+    }
+    .battery{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        height: 300px;
+        width: 150px;
+        border: 5px solid white;
+        border-radius: 10px;
+        box-shadow: 1px 1px 20px black;
+    }
+    .remain{
+        display: flex;
+        height: 300px;
+        position: absolute;
+        width: 150px;
+        bottom: 0;
+        border: 5px solid white;
+        border-radius: 10px;
+        background-color: limegreen;
+    }
+    .remain2{
+        display: flex;
+        height: 100px;
+        position: absolute;
+        width: 150px;
+        bottom: 0;
+        border: 5px solid white;
+        border-radius: 10px;
+        background-color: orange;
+    }
+    .remain3{
+        display: flex;
+        height: 50px;
+        position: absolute;
+        width: 150px;
+        bottom: 0;
+        border: 5px solid white;
+        border-radius: 10px;
+        background-color: red;
+    }
+    .batterywrap{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        width:50%;
+        margin-left: 25%;
+        margin-top: 10%;
+    }
+    .box{
+        position: absolute;
+        height: 30px;
+        width: 50px;
+        bottom: 100%;
+        background-color: rgb(216, 216, 216);
+    }
+    .column{
+        float: left;
+        width: 33.33%;
+    }
+    .row:after{
+        content: "";
+        display: table;
+        clear: both;
+    }
+    .textstyle{
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 1000;
+    }
+</style>
 </html>
