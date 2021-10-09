@@ -35,6 +35,53 @@
         <div id="Gotbutton" style="text-align: center; display: none;">
         <button onclick="removealert()">Got it</button>
     </div>
+    </div><hr><br>
+    <div style="text-align: center;">
+        <h1>Battery Remmaining</h1>
+    </div><br>
+    <div class="row">
+        <div class="column textstyle" style="text-align: center;">
+            {% for device in devices %}
+            {{ device[1] }}
+            {% endfor %}
+            <br><br>
+            <p class="textstyle" id="device1"></p>
+            <div class="batterywrap">
+                <div class="battery">
+                    <div class="box">
+                    </div>
+                    <div class="remain" id="remain1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="column textstyle" style="text-align: center;">
+            {% for device in devices %}
+            {{ device[1] }}
+            {% endfor %}
+            <br><br>
+            <p class="textstyle" id="device2"></p>
+            <div class="batterywrap">
+                <div class="battery">
+                    <div class="box">
+                    </div>
+                    <div class="remain2" id="remain2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="column textstyle" style="text-align: center;">
+            {% for device in devices %}
+            {{ device[1] }}
+            {% endfor %}
+            <br><br>
+            <p class="textstyle" id="device3"></p>
+            <div class="batterywrap">
+                <div class="battery">
+                    <div class="box">
+                    </div>
+                    <div class="remain3" id="remain3"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
