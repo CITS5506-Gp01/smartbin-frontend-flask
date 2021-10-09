@@ -129,13 +129,41 @@ def entries(deviceid):
         db.commit()
         return redirect(url_for('entries',deviceid=deviceid))
     print(maxdistance)
+
+
+
+    '''
+    datetimeform = testtdatetimeform()
+    if datetimeform.validate_on_submit():
+
+        return redirect(url_for('entries',deviceid=deviceid))
+
+    '''
+
+
+
+    
     db.commit()
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
     deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage)
 
 
-@app.route("/api/drawplot/<deviceid>")
-def drawplot(deviceid):
+@app.route("/api/drawplot/<deviceid>/<startdate>/<enddate>/")
+def drawplot(deviceid,startdate,enddate):
+
+    fullstartdate = None
+    fullenddate = None
+    
+    try:
+        fullstartdate = splitjsdate(startdate)
+        fullenddate = splitjsdate(enddate)
+        if(fullstartdate >= fullenddate):
+            fullstartdate = None
+            fullenddate = None
+    except:
+        print("badinput")
+    
+
 
     query = ("SELECT max_distance FROM devices WHERE id = "+ deviceid )
     cursor.execute(query)
@@ -169,12 +197,13 @@ def drawplot(deviceid):
             twothirdsthresholdrepeated.append(twothirds)
 
 
-
-
-
     print(distances)
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
     plt.ylim([0, maxdistance+1])
+
+    if(fullstartdate and fullenddate):
+        plt.xlim(fullstartdate,fullenddate)
+
     ax.plot(timings, distances, color="blue", marker='o')  # Plot some data on the axes.
     ax.plot(timings,maxdistancerepeated,color="red")
     if drawthresholds == True:
@@ -188,6 +217,68 @@ def drawplot(deviceid):
 
     return html_str
 
+
+'''
+@app.route("/api/testdate/", methods=['GET','POST'])
+def testdate():
+    r = request.get_json()
+    dateandtime = r["date"]
+    deviceid = r["deviceid"]
+    
+    
+    splitdatetime = dateandtime.split("T")
+    date = splitdatetime[0]
+    time = splitdatetime[1]
+
+    #print(date)
+    #print(time)
+
+    datesplit = date.split("-")
+    year = int(datesplit[0])
+    month = int(datesplit[1])
+    day =int( datesplit[2])
+
+    timesplit = time.split(":")
+    hour=int(timesplit[0])
+    minute=int(timesplit[1])
+
+    #print(year+month+day+hour+minute)
+
+    fulldatetime = datetime.datetime(year,month,day,hour,minute)
+    
+    
+    if(dateandtime):
+        fulldatetime = splitjsdate(dateandtime)
+        print(fulldatetime)
+        print(deviceid)
+        return '',200
+
+    return '',400
+'''
+
+def splitjsdate(stringdate):
+
+    splitdatetime = stringdate.split("T")
+    date = splitdatetime[0]
+    time = splitdatetime[1]
+
+    #print(date)
+    #print(time)
+
+    datesplit = date.split("-")
+    year = int(datesplit[0])
+    month = int(datesplit[1])
+    day =int( datesplit[2])
+
+    timesplit = time.split(":")
+    hour=int(timesplit[0])
+    minute=int(timesplit[1])
+
+    #print(year+month+day+hour+minute)
+
+    fulldatetime = datetime.datetime(year,month,day,hour,minute)
+    #print(fulldatetime)
+    return fulldatetime
 
 #changed impl to forms, but will keep this here just in case
 '''
@@ -208,12 +299,9 @@ def changemaxdistance():
     return '',200
 '''
 
-'''
-@app.route("/api/returnbinsthatarefillingup",methods = ["GET"])
-def returnbinsthatarefillingup:
-    print("todolol")
+
+
 # Additional support functions
-'''
 def calculate_dis(MaxDistance,Current):
     current_hight = MaxDistance - Current
     percentage = current_hight / MaxDistance
@@ -253,7 +341,6 @@ def getMaxDistInEntries(deviceid):
     return current[0][0]
 
 def getlatestdistancevalue(deviceid):
-    entries = []
     query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
     cursor.execute(query)
     maxtime = datetime.datetime(1970, 1, 1)

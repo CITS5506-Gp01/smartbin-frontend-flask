@@ -18,8 +18,8 @@
             <p> location {{ device[4] }} {{ device[5] }}</p>
             {% else %}
             <p> location unknown</p>
-            {% endif  %}
-            
+            {% endif %}
+
 
             <form action="" method="post">
                 {{ maxdistform.hidden_tag() }}
@@ -48,7 +48,18 @@
         -->
             #}
             <div>
-                <iframe src="/api/drawplot/{{ device[0] }}" style="width: 700px; height: 700px"></iframe>
+                <label for="changegraphstartdate">Select Start Date</label>
+                <input type="datetime-local" id="changegraphstartdate" name="changegraphstartdate">
+
+                <label for="changegraphenddate">Select End Date</label>
+                <input type="datetime-local" id="changegraphenddate" name="changegraphenddate">
+            </div>
+            <div>
+                <input type="button" onclick="changegraphdates(1)" value="update graph">
+            </div>
+            <div>
+                <iframe src="/api/drawplot/{{ device[0] }}/0/0" id=distanceplot
+                    style="width: 700px; height: 700px"></iframe>
             </div>
             <div>
                 {% for entry in entries %}
@@ -80,7 +91,24 @@
             xhttp.setRequestHeader('Content-type', 'application/json');
             xhttp.send(JSON.stringify({ "maxdistance": maxdistance, "deviceid": deviceid }));
 
-        }</script>
+        }
+
+        function changegraphdates(deviceid) {
+
+            startdate = document.getElementById("changegraphstartdate").value;
+            enddate = document.getElementById("changegraphenddate").value;
+            if (startdate && enddate) {
+                console.log(startdate);
+                console.log(enddate);
+                //alert(date);
+                document.getElementById("distanceplot").src = "/api/drawplot/{{ device[0] }}/" + startdate + "/" + enddate + "/";
+            }
+
+        }
+
+
+
+    </script>
 
 </body>
 {% endblock %}
