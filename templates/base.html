@@ -41,14 +41,14 @@ message in messages %}
         setInterval(function(){$.get("/BatteryRemain2", function(data){
             var status = data
             if (status == "30%"){
-                $(".remain2").css("height", "200px");
+                $(".remain2").css("height", "100px");
                 $("#device2").html(status);
             }
         })},1000)
         setInterval(function(){$.get("/BatteryRemain3", function(data){
             var status = data
             if (status == "10%"){
-                $(".remain3").css("height", "200px");
+                $(".remain3").css("height", "50px");
                 $("#device3").html(status);
             }
         })},1000)
