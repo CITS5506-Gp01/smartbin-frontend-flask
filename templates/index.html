@@ -1,4 +1,16 @@
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <style>
+        #mapid {
+            height: 500px;
+        }
+    </style>
 </head>
 
 {% extends 'base.html' %}
@@ -12,30 +24,92 @@
             <p class="lead">List of devices</p>
 
             {% for device in devices %}
-            {{ device[1] }}
-            {% set currentpercentage= format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f") %}
-            current level = {{ currentpercentage }}%
-            <a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
+            <div>
+                {{ device[1] }}
+                {% if getlatestdistancevalue(device[0]) %}
+                {% set currentpercentage= format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f")
+                %}
+                {% else %}
+                {% set currentpercentage = None %}
+                {% endif %}
+                current level = {{ currentpercentage }}%
+                <a href="{{ url_for('entries', deviceid = device[0]) }}"><button>check data</button></a>
+            </div>
             {% endfor %}
         </div>
     </div>
     <div class="container">
         <div style="text-align:center; color: red;"><br>
             <span id="alertmessage"></span>
-            {% with messages = get_flashed_messages() %} 
-                {% if messages %} 
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor%} 
-                {% endif %} 
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor%}
+            {% endif %}
             {% endwith %}
         </div>
     </div>
+
+    <div id="mapid"></div>
+    <script>
+
+        var mymap = L.map('mapid').setView([-25.2744, 133.7751], 4);
+
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+        }).addTo(mymap);
+
+        function retrievelocations() {
+
+            fetch("/api/providelocationdata/", {
+                method: "GET",
+
+            }).then(function (response) {
+                if (response.status == 200) {
+                    response.json().then(data => {
+                        testlist = data.testlist;
+                        console.log(data);
+
+                        for (let i = 0; i < data.length; i++) {
+
+                            let devicename = data[i][0];
+
+                            let latitude = data[i][1];
+                            let longtitude = data[i][2];
+
+                            let marker = L.marker([latitude, longtitude]).addTo(mymap);
+                            marker.bindPopup(devicename);
+                        }
+                    });
+
+                    return;
+                }
+                else if (response.status !== 200) {
+                    console.log(`Looks like there was a problem. Status code: ${response.status}`);
+                    return;
+                }
+            });
+        }
+
+        retrievelocations();
+
+
+
+
+
+
+
+
+    </script>
+
     <div class="container">
         <div id="Gotbutton" style="text-align: center; display: none;">
-        <button onclick="removealert()">Got it</button>
+            <button onclick="removealert()">Got it</button>
+        </div>
     </div>
-    </div><hr><br>
+    <hr><br>
     <div style="text-align: center;">
         <h1>Battery Remmaining</h1>
     </div><br>

@@ -9,6 +9,7 @@ Set up your virtual environment in the top-level folder and install all the requ
 ```bash
 python3 -m venv venv
 source venv/bin/activate
+pip3 install --upgrade pip
 pip install -r requirements.txt
 ```
 

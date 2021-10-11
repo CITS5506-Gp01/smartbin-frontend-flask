@@ -1,5 +1,6 @@
 from flask import Flask,flash
 from flask import render_template, url_for , request,redirect
+import simplejson as json
 
 import mysql.connector  
 
@@ -141,8 +142,10 @@ def entries(deviceid):
     for entry in cursor:
         entries.append(entry)
 
-    currentdistance = getlatestdistancevalue(deviceid)
-    currentpercentage = format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f")
+    latestdistancevalue = getlatestdistancevalue(device[0])
+    currentpercentage = None
+    if (latestdistancevalue):
+        currentpercentage = format(((device[3] - latestdistancevalue)/device[3])*100,".2f")
 
     maxdistanceinentries = getMaxDistInEntries(deviceid)
     maxdistform = changemaxdistanceform()
@@ -280,7 +283,7 @@ def drawtemperatureplot(deviceid,startdate,enddate):
         temperature =  entry[4]
         timing = entry[2]
         if(temperature):
-            if(temperature <= 100 and temperature > -50):
+            if(temperature <= 85 and temperature >= -40):
                 temperatures.append(temperature)
                 timings.append(timing)
 
@@ -300,45 +303,34 @@ def drawtemperatureplot(deviceid,startdate,enddate):
     return html_str
 
 
-
-
-'''
-@app.route("/api/testdate/", methods=['GET','POST'])
-def testdate():
-    r = request.get_json()
-    dateandtime = r["date"]
-    deviceid = r["deviceid"]
+@app.route("/api/providelocationdata/",methods=["GET"])
+def providelocationdata():
     
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
+    query = ("SELECT * FROM devices")
+    cursor.execute(query)
     
-    splitdatetime = dateandtime.split("T")
-    date = splitdatetime[0]
-    time = splitdatetime[1]
+    mainlist = []
 
-    #print(date)
-    #print(time)
+    for entry in cursor:
+        templist = []
+        devicename = entry[1]
+        latitude = entry[4]
+        longtitude = entry[5]
 
-    datesplit = date.split("-")
-    year = int(datesplit[0])
-    month = int(datesplit[1])
-    day =int( datesplit[2])
-
-    timesplit = time.split(":")
-    hour=int(timesplit[0])
-    minute=int(timesplit[1])
-
-    #print(year+month+day+hour+minute)
-
-    fulldatetime = datetime.datetime(year,month,day,hour,minute)
+        if(latitude and longtitude):
+            templist.append(devicename)
+            templist.append(latitude)
+            templist.append(longtitude)
+            
+            mainlist.append(templist)
     
-    
-    if(dateandtime):
-        fulldatetime = splitjsdate(dateandtime)
-        print(fulldatetime)
-        print(deviceid)
-        return '',200
+    db.commit()
+    db.close()
+    #return(jsonify(mainlist))
+    return json.dumps(mainlist)
 
-    return '',400
-'''
 
 def splitjsdate(stringdate):
 
@@ -352,11 +344,11 @@ def splitjsdate(stringdate):
     datesplit = date.split("-")
     year = int(datesplit[0])
     month = int(datesplit[1])
-    day =int( datesplit[2])
+    day = int( datesplit[2])
 
     timesplit = time.split(":")
-    hour=int(timesplit[0])
-    minute=int(timesplit[1])
+    hour = int(timesplit[0])
+    minute = int(timesplit[1])
 
     #print(year+month+day+hour+minute)
 
@@ -442,15 +434,13 @@ def getlatestdistancevalue(deviceid):
     cursor.execute(query)
     maxtime = datetime.datetime(1970, 1, 1)
     
-    entry = -1
+    entry = None
     for item in cursor:      
         entrytime = item[2]
         if(entrytime > maxtime):
             maxtime = entrytime
-            entry = item
-    
-    
-    print(entry[3])
+            entry = item[3]
+
     db.commit() 
     db.close()
-    return(entry[3])
+    return(entry)
