@@ -18,3 +18,11 @@ Successfully starting the application requires a top-level `.env` configuration 
 ```
 flask run
 ```
+
+## Miscellaneous Notes
+
+To trigger a stateful dump of the database, fire:
+
+```
+mysqldump -P <port> -h <host> -u <username> -p<password> <database> > <script_name>.sql
+```
