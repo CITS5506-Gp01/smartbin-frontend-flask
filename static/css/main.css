@@ -1,0 +1,24 @@
+
+body {
+  margin-left: 10rem;
+  margin-right: 10rem;
+  margin-bottom: 5rem;
+}
+
+div.header {
+  margin-top: 2rem;
+}
+
+/*
+  ========== MARGIN ORDERS ==========
+  margin: <top> <right> <bottom> <left>
+  margin: <top> <right / left> <bottom>
+  margin: <top / bottom> <right / left>
+*/
+div#mapid {
+  margin: 2rem 10rem;
+}
+
+div#Gotbutton {
+  margin-top: 1rem;
+}
