@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS distances, devices;
+DROP TABLE IF EXISTS records, devices;
 
 /* Creating the tables */
 
@@ -11,7 +11,7 @@ CREATE TABLE devices(
     longitude DECIMAL(8,5)
 );
 
-CREATE TABLE distances(
+CREATE TABLE records(
     id INT PRIMARY KEY AUTO_INCREMENT,
     device_id INT,
     logged_datetime TIMESTAMP DEFAULT NOW(),
@@ -30,7 +30,7 @@ CREATE TABLE distances(
 -- the current max_distance value for that device in the devices table.
 DROP TRIGGER IF EXISTS check_max_distance;
 delimiter //
-CREATE TRIGGER check_max_distance AFTER INSERT ON distances FOR EACH ROW
+CREATE TRIGGER check_max_distance AFTER INSERT ON records FOR EACH ROW
 BEGIN
     -- Get the current max distance
     SELECT max_distance INTO @current_max_distance FROM devices WHERE id = NEW.device_id;
@@ -45,7 +45,7 @@ delimiter ;
 -- If neither entry is NULL, update the devices table with these values.
 DROP TRIGGER IF EXISTS update_device_position;
 delimiter //
-CREATE TRIGGER update_device_position AFTER INSERT ON distances FOR EACH ROW
+CREATE TRIGGER update_device_position AFTER INSERT ON records FOR EACH ROW
 BEGIN
     IF NEW.lat IS NOT NULL THEN
         IF NEW.lng IS NOT NULL THEN
@@ -55,3 +55,13 @@ BEGIN
     END IF;
 END;//
 delimiter ;
+
+
+-- Inserting sample data
+
+INSERT INTO devices(device_name) VALUES ('device_1');
+
+INSERT INTO records VALUES
+(1,1,'2021-10-12 01:45:31',10.000,27,NULL,27.22753,172.93200),
+(2,1,'2021-10-12 01:46:01',9.530,28,NULL,NULL,NULL),
+(3,1,'2021-10-12 01:46:49',11.670,27,NULL,26.00000,172.12700);

@@ -41,16 +41,16 @@ for item in cursor:
 
 '''
 
-query = ("SELECT * FROM distances WHERE device_id = " + str(1) )
+query = ("SELECT * FROM records WHERE device_id = " + str(1) )
 cursor.execute(query)
 for entry in cursor:
     print(entry)
 
 '''
 
-print("distances")
+print("records")
 
-query = ("SELECT * FROM distances")
+query = ("SELECT * FROM records")
 cursor.execute(query)
 
 for item in cursor:
@@ -71,7 +71,7 @@ for item in cursor:
 
 
 def getMaxDistInEntries(deviceid):
-   query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
+   query = ("SELECT MAX(distance) FROM records WHERE device_id = " + str(deviceid))
    cursor.execute(query)
    current = []
    for entry in cursor:
@@ -95,7 +95,7 @@ for item in cursor:
 #query = ("ALTER TABLE devices ADD COLUMN longtitude DECIMAL(8,5) NOT NULL;")
 #cursor.execute(query)
 '''
-query = ("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'distances'")
+query = ("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'records'")
 cursor.execute(query)
 for item in cursor:
    print(item)
@@ -105,7 +105,7 @@ for item in cursor:
 
 def getlatestdistancevalue(deviceid):
    entries = []
-   query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+   query = ("SELECT * FROM records where device_id =" + str(deviceid) ) 
    cursor.execute(query)
    maxtime = datetime.datetime(1970, 1, 1)
    
