@@ -39,15 +39,17 @@ message in messages %}
         setInterval(function(){$.get("/BatteryRemain2", function(data){
             var status = data
             if (status == "30%"){
-                $(".remain2").css("height", "100px");
-                $("#device2").html(status);
+                $(".remain2").css("height", "300px");
+                $(".remain2").css("background-color", "grey");
+                $("#device2").html('N/A');
             }
         })},10000)
         setInterval(function(){$.get("/BatteryRemain3", function(data){
             var status = data
             if (status == "10%"){
-                $(".remain3").css("height", "50px");
-                $("#device3").html(status);
+                $(".remain3").css("height", "300px");
+                $(".remain3").css("background-color", "grey");
+                $("#device3").html('N/A');
             }
         })},10000)
     });
@@ -93,23 +95,23 @@ message in messages %}
     }
     .remain2{
         display: flex;
-        height: 100px;
+        height: 300px;
         position: absolute;
         width: 150px;
         bottom: 0;
         border: 5px solid white;
         border-radius: 10px;
-        background-color: orange;
+        background-color: grey;
     }
     .remain3{
         display: flex;
-        height: 50px;
+        height: 300px;
         position: absolute;
         width: 150px;
         bottom: 0;
         border: 5px solid white;
         border-radius: 10px;
-        background-color: red;
+        background-color: grey;
     }
     .batterywrap{
         display: flex;
