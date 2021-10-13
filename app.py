@@ -136,7 +136,7 @@ def entries(deviceid):
     maxdistance = device[3]
 
 
-    query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
+    query = ("SELECT * FROM records WHERE device_id = " + deviceid )
     cursor.execute(query)
     entries = []
     for entry in cursor:
@@ -205,7 +205,7 @@ def drawplot(deviceid,startdate,enddate):
     #print("max distance = " + str(maxdistance))
     #db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
 
-    query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
+    query = ("SELECT * FROM records WHERE device_id = " + deviceid )
     cursor.execute(query)
     maxdistancerepeated= []
     onethirdthresholdrepeated = []
@@ -272,7 +272,7 @@ def drawtemperatureplot(deviceid,startdate,enddate):
     #print("max distance = " + str(maxdistance))
     #db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
 
-    query = ("SELECT * FROM distances WHERE device_id = " + deviceid )
+    query = ("SELECT * FROM records WHERE device_id = " + deviceid )
     cursor.execute(query)
 
     temperatures = []
@@ -289,8 +289,8 @@ def drawtemperatureplot(deviceid,startdate,enddate):
 
 
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
-    #plt.ylim()
-
+    
+    #plt.ylim([-40, 85])
     if(fullstartdate and fullenddate):
         plt.xlim(fullstartdate,fullenddate)
 
@@ -391,7 +391,7 @@ def calculate_dis(MaxDistance,Current):
 def check_device_current_distance(DeviceID):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     cursor=db.cursor()
-    query = ("SELECT distance FROM distances WHERE device_id = " + str(DeviceID) + " ORDER BY id DESC limit 1")
+    query = ("SELECT distance FROM records WHERE device_id = " + str(DeviceID) + " ORDER BY id DESC limit 1")
     cursor.execute(query)
     current = []
     for datas in cursor:
@@ -404,7 +404,7 @@ def check_device_current_distance(DeviceID):
 def get_record_date(DeviceID):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     cursor=db.cursor()
-    query = ("SELECT logged_datetime FROM distances WHERE distance = (SELECT MIN(distance) FROM distances WHERE device_id =" + str(DeviceID) + ")")
+    query = ("SELECT logged_datetime FROM records WHERE distance = (SELECT MIN(distance) FROM records WHERE device_id =" + str(DeviceID) + ")")
     cursor.execute(query)
     date = []
     for datas in cursor:
@@ -417,7 +417,7 @@ def get_record_date(DeviceID):
 def getMaxDistInEntries(deviceid):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     cursor=db.cursor()
-    query = ("SELECT MAX(distance) FROM distances WHERE device_id = " + str(deviceid))
+    query = ("SELECT MAX(distance) FROM records WHERE device_id = " + str(deviceid))
     cursor.execute(query)
     current = []
     for entry in cursor:
@@ -430,7 +430,7 @@ def getMaxDistInEntries(deviceid):
 def getlatestdistancevalue(deviceid):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     cursor=db.cursor()
-    query = ("SELECT * FROM distances where device_id =" + str(deviceid) ) 
+    query = ("SELECT * FROM records where device_id =" + str(deviceid) ) 
     cursor.execute(query)
     maxtime = datetime.datetime(1970, 1, 1)
     
