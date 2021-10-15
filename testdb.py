@@ -118,6 +118,57 @@ def getlatestdistancevalue(deviceid):
 getlatestdistancevalue(1)
 
 
+
+
+
+
+
+
+def providelocationdata():
+    
+   db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+   cursor=db.cursor()
+   query = ("SELECT * FROM records")
+   cursor.execute(query)
+   
+   mainlist = []
+   deviceidlist = []
+
+
+   for entry in cursor:
+      deviceid = entry[1]
+      latitude = entry[6]
+      longtitude = entry[7]
+
+       
+      if(latitude != 0 and longtitude != 0 and latitude and longtitude):
+         if(deviceid not in deviceidlist):
+               deviceidlist.append(deviceid)
+               templist = []
+               templist.append(deviceid)
+               templist.append(latitude)
+               templist.append(longtitude)
+               mainlist.append(templist)
+
+         else:
+            listindex = deviceidlist.index(deviceid)
+            mainlist[listindex][1] = latitude
+            mainlist[listindex][2] = longtitude
+
+
+
+   print(mainlist)
+   print(deviceidlist)
+
+
+
+
+providelocationdata()
+
+
+
+
+
 db.commit()
 
 
