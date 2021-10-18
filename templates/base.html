@@ -33,6 +33,43 @@ message in messages %}
             var status = data
             if (status == "100%"){
                 $("#remain1").css("height", "300px");
+                $("#remain1").css("background-color", "limegreen");
+                $("#device1").html(status);
+            } else if (status == "90%"){
+                $("#remain1").css("height", "270px");
+                $("#remain1").css("background-color", "limegreen");
+                $("#device1").html(status);
+            } else if (status == "80%"){
+                $("#remain1").css("height", "240px");
+                $("#remain1").css("background-color", "limegreen");
+                $("#device1").html(status);
+            } else if (status == "70%"){
+                $("#remain1").css("height", "210px");
+                $("#remain1").css("background-color", "orange");
+                $("#device1").html(status);
+            } else if (status == "60%"){
+                $("#remain1").css("height", "180px");
+                $("#remain1").css("background-color", "orange");
+                $("#device1").html(status);
+            } else if (status == "50%"){
+                $("#remain1").css("height", "150px");
+                $("#remain1").css("background-color", "orange");
+                $("#device1").html(status);
+            } else if (status == "40%"){
+                $("#remain1").css("height", "120px");
+                $("#remain1").css("background-color", "orange");
+                $("#device1").html(status);
+            } else if (status == "30%"){
+                $("#remain1").css("height", "90px");
+                $("#remain1").css("background-color", "red");
+                $("#device1").html(status);
+            } else if (status == "20%"){
+                $("#remain1").css("height", "60px");
+                $("#remain1").css("background-color", "red");
+                $("#device1").html(status);
+            } else {
+                $("#remain1").css("height", "30px");
+                $("#remain1").css("background-color", "red");
                 $("#device1").html(status);
             }
         })},10000)
@@ -91,7 +128,7 @@ message in messages %}
         bottom: 0;
         border: 5px solid white;
         border-radius: 10px;
-        background-color: limegreen;
+        background-color: grey;
     }
     .remain2{
         display: flex;

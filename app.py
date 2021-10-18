@@ -107,9 +107,29 @@ def alert():
 
 @app.route('/BatteryRemain1', methods=['GET','POST'])
 def GetBatteryStatus():
-    Battery_Remain = 100
-    if Battery_Remain >= 90:
+    Max_Battery = round(getMaxBattery(1),2)
+    Current_Battery = round(getCurrentBattery(1),2)
+    Divided = round(Current_Battery/Max_Battery,2)
+    if Divided >= 0.9:
         return "100%"
+    elif Divided <0.9 and Divided >= 0.8:
+        return "90%"
+    elif Divided <0.8 and Divided >= 0.7:
+        return "80%"
+    elif Divided <0.7 and Divided >= 0.6:
+        return "70%"
+    elif Divided <0.6 and Divided >= 0.5:
+        return "60%"
+    elif Divided <0.5 and Divided >= 0.4:
+        return "50%"
+    elif Divided <0.4 and Divided >= 0.3:
+        return "40%"
+    elif Divided <0.3 and Divided >= 0.2:
+        return "30%"
+    elif Divided <0.2 and Divided >= 0.1:
+        return "20%"
+    else:
+        return "Battery Low"
 
 @app.route('/BatteryRemain2', methods=['GET','POST'])
 def GetBatteryStatus2():
@@ -476,3 +496,31 @@ def getlatestdistancevalue(deviceid):
     db.commit() 
     db.close()
     return(entry)
+
+
+def getMaxBattery(DeviceID):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
+    query = ("SELECT Max(battery) FROM records WHERE device_id = " + str(DeviceID))
+    cursor.execute(query)
+    current = []
+    for datas in cursor:
+        current.append(datas)
+    db.commit()
+    db.close()
+
+    return current[0][0]
+
+
+def getCurrentBattery(DeviceID):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
+    query = ("SELECT battery FROM records WHERE device_id = " + str(DeviceID) + " ORDER BY id DESC limit 1")
+    cursor.execute(query)
+    current = []
+    for datas in cursor:
+        current.append(datas)
+    db.commit()
+    db.close()
+
+    return current[0][0]
