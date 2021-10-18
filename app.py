@@ -227,7 +227,7 @@ def drawplot(deviceid,startdate,enddate):
 
 
     fig, ax = plt.subplots()  # Create a figure containing a single axes.
-    plt.ylim([0, maxdistance+1])
+    plt.ylim([0, maxdistance])
 
     if(fullstartdate and fullenddate):
         plt.xlim(fullstartdate,fullenddate)
