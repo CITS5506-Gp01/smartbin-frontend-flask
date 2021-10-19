@@ -67,10 +67,14 @@ message in messages %}
                 $("#remain1").css("height", "60px");
                 $("#remain1").css("background-color", "red");
                 $("#device1").html(status);
-            } else {
+            } else if (status == "10%") {
                 $("#remain1").css("height", "30px");
                 $("#remain1").css("background-color", "red");
                 $("#device1").html(status);
+            } else{
+                $("#remain1").css("height", "30px");
+                $("#remain1").css("background-color", "red");
+                $("#device1").html("Low Battery");
             }
         })},10000)
         setInterval(function(){$.get("/BatteryRemain2", function(data){

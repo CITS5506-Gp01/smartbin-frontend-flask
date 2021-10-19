@@ -109,28 +109,27 @@ def alert():
 def GetBatteryStatus():
     Max_Battery = round(getMaxBattery(1),2)
     Current_Battery = round(getCurrentBattery(1),2)
-    if Current_Battery != 0:
-        Divided = round(Current_Battery/Max_Battery,2)
-    else:
-        Divided = 0
-    if Divided >= 0.9:
+    print(Current_Battery)
+    if Current_Battery >= 4.06:
         return "100%"
-    elif Divided <0.9 and Divided >= 0.8:
+    elif Current_Battery <4.06 and Current_Battery >= 3.98:
         return "90%"
-    elif Divided <0.8 and Divided >= 0.7:
+    elif Current_Battery <3.98 and Current_Battery >= 3.92:
         return "80%"
-    elif Divided <0.7 and Divided >= 0.6:
+    elif Current_Battery <3.92 and Current_Battery >= 3.87:
         return "70%"
-    elif Divided <0.6 and Divided >= 0.5:
+    elif Current_Battery <3.87 and Current_Battery >= 3.82:
         return "60%"
-    elif Divided <0.5 and Divided >= 0.4:
+    elif Current_Battery <3.82 and Current_Battery >= 3.79:
         return "50%"
-    elif Divided <0.4 and Divided >= 0.3:
+    elif Current_Battery <3.79 and Current_Battery >= 3.77:
         return "40%"
-    elif Divided <0.3 and Divided >= 0.2:
+    elif Current_Battery <3.77 and Current_Battery >= 3.74:
         return "30%"
-    elif Divided <0.2 and Divided >= 0.1:
+    elif Current_Battery <3.74 and Current_Battery >= 3.68:
         return "20%"
+    elif Current_Battery <3.68 and Current_Battery >= 3.45:
+        return "10%"
     else:
         return "Battery Low"
 
