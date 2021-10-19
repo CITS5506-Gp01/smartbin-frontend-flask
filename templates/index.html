@@ -32,7 +32,7 @@
             {% for device in devices %}
             <div>
                 {{ device[1] }}
-                {% if getlatestdistancevalue(device[0]) %}
+                {% if getlatestdistancevalue(device[0]) != None %}
                 {% set currentpercentage= format(((device[3] - getlatestdistancevalue(device[0]))/device[3])*100,".2f")
                 %}
                 {% else %}

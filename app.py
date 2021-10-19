@@ -167,7 +167,7 @@ def entries(deviceid):
     latestdistancevalue = getlatestdistancevalue(device[0])
     currentpercentage = None
     print(latestdistancevalue)
-    if (latestdistancevalue):
+    if (latestdistancevalue != None):
         currentpercentage = format(((device[3] - latestdistancevalue)/device[3])*100,".2f")
 
     maxdistanceinentries = getMaxDistInEntries(deviceid)
@@ -525,20 +525,24 @@ def getMaxDistInEntries(deviceid):
 def getlatestdistancevalue(deviceid):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     cursor=db.cursor()
+    query = ("SELECT * FROM devices WHERE id = " + str(deviceid))
+    cursor.execute(query)
+    maxdistance = None
+    for item in cursor:
+        maxdistance = item[3]
+
+
     query = ("SELECT * FROM records where device_id =" + str(deviceid) ) 
     cursor.execute(query)
-    maxtime = datetime.datetime(1970, 1, 1)
-    
-    entry = None
+    latestdistance = None
     for item in cursor:      
-        entrytime = item[2]
-        if(entrytime > maxtime):
-            maxtime = entrytime
-            entry = item[3]
-
+        distance = item[3]
+        if (distance <= maxdistance):
+            latestdistance = distance
+        
     db.commit() 
     db.close()
-    return(entry)
+    return(latestdistance)
 
 
 def getMaxBattery(DeviceID):
