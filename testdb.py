@@ -165,6 +165,44 @@ def providelocationdata():
 
 providelocationdata()
 
+cursor=db.cursor(buffered = True)
+query = ("SELECT * FROM records")
+cursor.execute(query)
+    
+mainlist = []
+deviceidlist = []
+
+for entry in cursor:
+      
+   deviceid = entry[1]
+   latitude = entry[6] 
+   longtitude = entry[7]
+      
+   if(latitude != 0 and longtitude != 0 and  latitude and longtitude):
+      if(deviceid not in deviceidlist):
+         deviecename = deviceid
+         cursor2 = db.cursor(buffered = True)
+         query2 = ("SELECT device_name FROM devices WHERE id = " + str(deviceid))
+         cursor2.execute(query2)
+         for entry2 in cursor2:
+            print("cursor2")
+            print(entry2)
+            devicename = entry2
+         
+         
+         deviceidlist.append(deviecename)
+         templist = []
+         templist.append(deviceid)
+         templist.append(latitude)
+         templist.append(longtitude)
+         mainlist.append(templist)
+      else:
+         listindex = deviceidlist.index(deviceid)
+         mainlist[listindex][1] = latitude
+         mainlist[listindex][2] = longtitude
+
+
+
 
 
 

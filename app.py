@@ -166,6 +166,7 @@ def entries(deviceid):
 
     latestdistancevalue = getlatestdistancevalue(device[0])
     currentpercentage = None
+    print(latestdistancevalue)
     if (latestdistancevalue):
         currentpercentage = format(((device[3] - latestdistancevalue)/device[3])*100,".2f")
 
@@ -331,7 +332,7 @@ def drawtemperatureplot(deviceid,startdate,enddate):
 def providelocationdata():
     
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
-    cursor=db.cursor()
+    cursor=db.cursor(buffered = True)
     query = ("SELECT * FROM records")
     cursor.execute(query)
     
@@ -343,16 +344,25 @@ def providelocationdata():
     for entry in cursor:
         
         deviceid = entry[1]
-        latitude = entry[6]
+        latitude = entry[6] 
         longtitude = entry[7]
         
+        deviecename = deviceid
 
         if(latitude != 0 and longtitude != 0 and latitude and longtitude):
             if(deviceid not in deviceidlist):
+                cursor2 = db.cursor(buffered = True)
+                query2 = ("SELECT device_name FROM devices WHERE id = " + str(deviceid))
+                cursor2.execute(query2)
+                for entry2 in cursor2:
+                    print(entry2)
+                    devicename = entry2
+                
+                
                 deviceidlist.append(deviceid)
 
                 templist = []
-                templist.append(deviceid)
+                templist.append(devicename)
                 templist.append(latitude)
                 templist.append(longtitude)
 
