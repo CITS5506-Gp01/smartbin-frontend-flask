@@ -109,7 +109,10 @@ def alert():
 def GetBatteryStatus():
     Max_Battery = round(getMaxBattery(1),2)
     Current_Battery = round(getCurrentBattery(1),2)
-    Divided = round(Current_Battery/Max_Battery,2)
+    if Current_Battery != 0:
+        Divided = round(Current_Battery/Max_Battery,2)
+    else:
+        Divided = 0
     if Divided >= 0.9:
         return "100%"
     elif Divided <0.9 and Divided >= 0.8:
