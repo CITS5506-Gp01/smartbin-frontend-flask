@@ -179,6 +179,8 @@ def entries(deviceid):
         return redirect(url_for('entries',deviceid=deviceid))
     print(maxdistance)
 
+    latestlocation = getlocationdatafordevice(deviceid)
+
 
 
     '''
@@ -192,7 +194,7 @@ def entries(deviceid):
     db.commit()
     db.close()
     return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
-    deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage)
+    deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage,latestlocation = latestlocation)
 
 
 @app.route("/api/drawplot/<deviceid>/<startdate>/<enddate>/")
@@ -382,6 +384,35 @@ def providelocationdata():
     db.close()
     #return(jsonify(mainlist))
     return json.dumps(mainlist)
+
+
+def getlocationdatafordevice(deviceid):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
+    query = ("SELECT * FROM records WHERE device_id = "+ str(deviceid))
+    cursor.execute(query)
+    
+    deviceid = None
+    latitude = None
+    longtitude = None
+
+    for entry in cursor:
+        
+        nextdeviceid = entry[1]
+        nextlatitude = entry[6]
+        nextlongtitude = entry[7]
+
+        if(nextlatitude != 0 and nextlongtitude != 0 and nextlatitude and nextlongtitude):
+            deviceid = nextdeviceid
+            latitude = nextlatitude
+            longtitude = nextlongtitude
+
+    returnlist = [latitude,longtitude]
+    return returnlist
+
+
+
+    
 
 
 def splitjsdate(stringdate):
