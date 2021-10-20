@@ -20,6 +20,11 @@
             <p> location unknown</p>
             {% endif %}
 
+            {% if latesttemperature %}
+            <p> temperature =  {{ latesttemperature }}</p>
+            {% else %}
+            <p> temperature unknown</p>
+            {% endif %}
 
             <form action="" method="post">
                 {{ maxdistform.hidden_tag() }}

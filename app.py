@@ -169,7 +169,7 @@ def entries(deviceid):
     print(latestdistancevalue)
     if (latestdistancevalue != None):
         currentpercentage = format(((device[3] - latestdistancevalue)/device[3])*100,".2f")
-
+    
     maxdistanceinentries = getMaxDistInEntries(deviceid)
     maxdistform = changemaxdistanceform()
     if maxdistform.validate_on_submit():
@@ -181,8 +181,9 @@ def entries(deviceid):
         db.close()
         return redirect(url_for('entries',deviceid=deviceid))
     print(maxdistance)
-
+    
     latestlocation = getlocationdatafordevice(deviceid)
+    latesttemperature = getlatestvalidtemperaturevalue(deviceid)
 
 
 
@@ -196,7 +197,7 @@ def entries(deviceid):
     
     db.commit()
     db.close()
-    return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance,
+    return render_template("entries.html", device=device,entries= entries,maxdistance=maxdistance, latesttemperature=latesttemperature,
     deviceid=deviceid,maxdistform=maxdistform,maxdistanceinentries=maxdistanceinentries,currentpercentage=currentpercentage,latestlocation = latestlocation)
 
 
@@ -543,6 +544,22 @@ def getlatestdistancevalue(deviceid):
     db.commit() 
     db.close()
     return(latestdistance)
+
+def getlatestvalidtemperaturevalue(deviceid):
+    db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
+    cursor=db.cursor()
+    query = ("SELECT * FROM records where device_id =" + str(deviceid) ) 
+    cursor.execute(query)
+    latesttemperature = None
+    for item in cursor:      
+        temperature = item[4]
+        if(temperature <= 85 and temperature >= -40):
+            latesttemperature = temperature
+
+    db.commit() 
+    db.close()
+    return latesttemperature
+
 
 
 def getMaxBattery(DeviceID):
