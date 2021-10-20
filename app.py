@@ -77,23 +77,24 @@ def alert():
         device_maxDistance = items[3]
         current_mindistance = check_device_current_distance(items[0]) # Check each device's current recorded min distance
         volume_percentage = calculate_dis(device_maxDistance,current_mindistance)
+        print(volume_percentage)
         record_date = get_record_date(items[0])
-        if volume_percentage >= "{:.0%}".format(30) and volume_percentage <= "{:.0%}".format(50): # Need to change later, Test Flash
+        if volume_percentage >= 0.30 and volume_percentage <= 0.50: # Need to change later, Test Flash
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Pretty Clean!".format(items[1],volume_percentage,record_date)
             return Message
             #flash( Message)
             #flash(Infor)
-        elif volume_percentage >= "{:.0%}".format(50) and volume_percentage <= "{:.0%}".format(70):
+        elif volume_percentage > 0.50 and volume_percentage <= 0.70:
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Need attention!".format(items[1],volume_percentage,record_date)
             return Message
             #flash(Message)
-        elif volume_percentage >= "{:.0%}".format(70) and volume_percentage <= "{:.0%}".format(90):
+        elif volume_percentage > 0.70 and volume_percentage <= 0.90:
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Better to have a look! ".format(items[1],volume_percentage,record_date)
             Infor = "Clean actions required"
             return Message
             #flash(Message)
             #flash(Infor)
-        elif volume_percentage >= "{:.0%}".format(90):
+        elif volume_percentage > 0.90 and volume_percentage <= 1.00:
             Message = "Warning! The Bin: {0} is almost full, please empty the bin ASAP! ".format(items[1])
             return Message
             #flash(Message)
@@ -476,8 +477,7 @@ def changemaxdistance():
 def calculate_dis(MaxDistance,Current):
     db = mysql.connector.connect(user=user, password=password, host=host, database=database,port = port)
     current_hight = MaxDistance - Current
-    percentage = current_hight / MaxDistance
-    result = "{:.0%}".format(percentage)
+    result = round(current_hight / MaxDistance,2)
     db.commit()
     db.close()
     return result
