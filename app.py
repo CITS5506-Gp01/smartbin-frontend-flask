@@ -79,32 +79,24 @@ def alert():
         volume_percentage = calculate_dis(device_maxDistance,current_mindistance)
         print(volume_percentage)
         record_date = get_record_date(items[0])
-        if volume_percentage >= 0.30 and volume_percentage <= 0.50: # Need to change later, Test Flash
+        if volume_percentage >= 0.30 and volume_percentage <= 0.50:
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Pretty Clean!".format(items[1],"{:.0%}".format(volume_percentage),record_date)
             return Message
-            #flash( Message)
-            #flash(Infor)
         elif volume_percentage > 0.50 and volume_percentage <= 0.70:
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Need attention!".format(items[1],"{:.0%}".format(volume_percentage),record_date)
             return Message
-            #flash(Message)
         elif volume_percentage > 0.70 and volume_percentage <= 0.90:
             Message = "Alert! The Bin: {0} volume has reached {1}. Recorded at: {2} Better to have a look! ".format(items[1],"{:.0%}".format(volume_percentage),record_date)
             Infor = "Clean actions required"
             return Message
-            #flash(Message)
-            #flash(Infor)
         elif volume_percentage > 0.90 and volume_percentage <= 1.00:
             Message = "Warning! The Bin: {0} is almost full, please empty the bin ASAP! ".format(items[1])
             return Message
-            #flash(Message)
         else:
             Message = "Nothing to worry about"
             return Message
-            #flash(Message)
     db.commit()
     db.close()
-#db.close()
 
 @app.route('/BatteryRemain1', methods=['GET','POST'])
 def GetBatteryStatus():
